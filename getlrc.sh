@@ -26,6 +26,7 @@ get_metadata() {
   inform_pattern="General;get?artist_name=%Performer%&track_name=%Track%&album_name=%Album%&duration="
   metadata=$(mediainfo --Inform="$inform_pattern" "$1")
   metadata=${metadata// /+} # Replaces Spaces with '+'
+  metadata=${metadata//’/\'} # Replaces the stupid apostrophe with the un-stupid apostrophe
   get_duration "$1" 
   metadata+="$duration_sec"
 }
