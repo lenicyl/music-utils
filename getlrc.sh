@@ -8,7 +8,7 @@ Usage: $0 "<Path>"
   If a directory is submitted, all opus,flac and mp3 files in 
   the directory are used to fetch lyrics
   
-  This script downloads ${bold}synced lrc files${normal} for requested music 
+  This script downloads $(tput bold)synced lrc files$(tput sgr0) for requested music 
   files, saving them in the same directory and with the same 
   filename as the corresponding music file.
 
