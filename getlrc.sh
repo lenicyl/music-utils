@@ -42,15 +42,28 @@ export -f get_duration
 
 get_lrc() {
   get_metadata "$1"
-  json=$(curl -s "https://lrclib.net/api/$metadata")  
-  filename=${1##*/} # Prints filename without path
-  filepath=${1%.*} # Prints full path without file extension
-  
-  [ "$(jq -r ".statusCode" <<< "$json")" != "404" ] && 
-    jq -r ".syncedLyrics" <<< "$json" > "$filepath.lrc" &&
-    echo "$filepath.lrc downloaded" ||
-    echo "Could not fetch lyrics for $filename" 
-} 
+  json=$(curl -s "https://lrclib.net/api/$metadata")
+  filename=${1##*/} # filename with extension
+  fileglob=${filename%.*} # filename, no extension
+  filepath=${1%.*} # full path, no file extension
+
+  red=$(tput setaf 1)
+  green=$(tput setaf 2)
+  gray=$(tput setaf 8)
+
+  if [[ ! -f "$filepath.lrc" ]]; then
+    if [[ "$(jq -r ".statusCode" <<< "$json")" = 404 ]]; then
+      echo "${red}$filename - Could not fetch lyrics"
+    elif [[ "$(jq -r ".syncedLyrics" <<< "$json")" = "null" ]]; then
+      echo "${red}$filename - Synced Lyrics unavailable"
+    else
+      jq -r ".syncedLyrics" <<< "$json" > "$filepath.lrc" &&
+      echo "${green}$fileglob.lrc - downloaded"
+    fi
+  else
+    echo "${gray}$fileglob.lrc - already exists"
+  fi
+}
 export -f get_lrc
 
 
